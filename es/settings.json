@@ -1,0 +1,13 @@
+{
+    "settings" : {
+        "analysis": {
+             "analyzer": {
+              "payload_analyzer": {
+                "type": "custom",
+                "tokenizer":"whitespace",
+                 "filter":"delimited_payload_filter"
+              }
+          }
+        }
+     }
+}
