@@ -35,7 +35,7 @@ if(!application) {
 def vmap = context.getAttribute('vmap')
 
 def sparqlQuery = request.getParameter('query')
-
+if (sparqlQuery && sparqlQuery.size()>0) {
 def x = []
 def dim = 0
 def labels = []
@@ -94,7 +94,7 @@ exp.query = sparqlQuery
 def builder = new JsonBuilder(jMap)
 response.contentType = 'application/json'
 println builder.toPrettyString()
-
+}
 
 /*
 sparql.each sparqlQuery, {
