@@ -1,0 +1,11 @@
+{
+    "vector" : {
+        "properties" : {
+            "@model_factor": {
+              "type": "text",
+              "term_vector": "with_positions_offsets_payloads",
+              "analyzer" : "payload_analyzer"
+           }
+        }
+    }
+}
