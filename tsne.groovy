@@ -76,15 +76,21 @@ y.eachWithIndex { e, i ->
 }
 
 jMap.results.bindings = jMap.results.bindings.collect { m ->
-  m = m.collectEntries { k, v ->
+  def m2 = [:]
+  m.each { k, v ->
     if (v.value in labels) {
       def coord = tMap[v.value]
-      v.coord = [:]
-      v.coord.x = coord[0]
-      v.coord.y = coord[1]
+      def nkeyx = k+"_coord_x"
+      def nkeyy = k+"_coord_y"
+      m2[nkeyx] = [:]
+      m2[nkeyx].type = "literal"
+      m2[nkeyx].value = coord[0]
+      m2[nkeyy] = [:]
+      m2[nkeyy].type = "literal"
+      m2[nkeyy].value = coord[1]
     } 
-    [k, v]
   }
+  m + m2
 }
 
 Expando exp = new Expando()
