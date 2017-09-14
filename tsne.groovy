@@ -58,7 +58,7 @@ if(!application) {
   application = request.getApplication(true)
 }
 
-def vmap = context.getAttribute('vmap')
+//def vmap = context.getAttribute('vmap')
 
 def sparqlQuery = request.getParameter('query')
 if (sparqlQuery && sparqlQuery.size()>0) {

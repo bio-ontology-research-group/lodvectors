@@ -31,10 +31,11 @@ def search(def id) {
 
 def similar(def id) {
   def vector = search(id)
-  vector = vector.split(" ").collect { it.split("\\|")[1]}
-  def url = 'http://127.0.0.1:9200/'
-  def http = new HTTPBuilder(url)
-  def query = """
+  if (vector) {
+    vector = vector.split(" ").collect { it.split("\\|")[1]}
+    def url = 'http://127.0.0.1:9200/'
+    def http = new HTTPBuilder(url)
+    def query = """
 {
     "stored_fields": ["name"],
     "query": {
@@ -60,15 +61,19 @@ def similar(def id) {
     }
 }
 """
-  def jsonSlurper = new JsonSlurper()
-  def js = new JsonBuilder(jsonSlurper.parseText(query))
-  def t
-  http.post( path: '/vector/_search', requestContentType : JSON, body: js.toPrettyString() ) { resp, reader -> t = reader }
-  http.shutdown()
-  def rmap = [:]
-  t.hits.hits.each { hit ->
-    println hit
-    rmap[hit._id] = hit._score
+    def jsonSlurper = new JsonSlurper()
+    def js = new JsonBuilder(jsonSlurper.parseText(query))
+    def t
+    http.post( path: '/vector/_search', requestContentType : JSON, body: js.toPrettyString() ) { resp, reader -> t = reader }
+    http.shutdown()
+    def rmap = [:]
+    t.hits.hits.each { hit ->
+      def rid = hit._id.replaceAll("uniprot.","http://purl.uniprot.org/uniprot/")
+      rmap[rid] = hit._score
+    }
+    rmap
+  } else {
+    null
   }
 }
 
@@ -78,17 +83,20 @@ if(!application) {
 
 def query = params.query
 def qtype = params.type
-if (qtype && qtype == "vec") {
+if (qtype && qtype == "getvec") {
   def result = search(query)
   if (result) {
     println result.split(" ").collect { it.split("\\|")[1] }
   } else {
-    println "{}"
+    println ""
   }
 } else {
   def result = similar(query)
-
-  def builder = new JsonBuilder(result)
-  response.contentType = 'application/json'
-  println builder.toPrettyString()
+  if (result) {
+    def builder = new JsonBuilder(result)
+    response.contentType = 'application/json'
+    println builder.toPrettyString()
+  } else {
+    println "{}"
+  }
 }

@@ -15,22 +15,22 @@ import groovy.servlet.*
 import org.eclipse.jetty.servlets.*
 				 // Add the filter, and then use the provided FilterHolder to
 def startServer() {
-  def map = [:]
-  def rmap = [:]
-  new File("uniprot.map").splitEachLine("\t") { line ->
-    def iri = line[0]?.replaceAll("<","")?.replaceAll(">","")
-    def id = line[1]
-    map[iri] = id
-    rmap[id] = iri
-  }
+  // def map = [:]
+  // def rmap = [:]
+  // new File("uniprot.map").splitEachLine("\t") { line ->
+  //   def iri = line[0]?.replaceAll("<","")?.replaceAll(">","")
+  //   def id = line[1]
+  //   map[iri] = id
+  //   rmap[id] = iri
+  // }
   
-  def vmap = [:]
-  new File("uniprot.vec").splitEachLine(" ") { line ->
-    def id = line[0]
-    def iri = rmap[id]
-    def vec = line[1..-1].collect { new Double(it) }
-    vmap[iri] = vec
-  }
+  // def vmap = [:]
+  // new File("uniprot.vec").splitEachLine(" ") { line ->
+  //   def id = line[0]
+  //   def iri = rmap[id]
+  //   def vec = line[1..-1].collect { new Double(it) }
+  //   vmap[iri] = vec
+  // }
   
 
   def server = new Server(31337)
@@ -39,7 +39,7 @@ def startServer() {
   context.addServlet(GroovyServlet, '/tsne.groovy')
   context.addServlet(GroovyServlet, '/sim.groovy')
   context.setAttribute('version', '0.1')
-  context.setAttribute('vmap', vmap)
+  //  context.setAttribute('vmap', vmap)
   FilterHolder cors = context.addFilter(CrossOriginFilter.class,"/*",EnumSet.of(DispatcherType.REQUEST))
   cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
   cors.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
