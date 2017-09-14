@@ -37,7 +37,6 @@ def similar(def id) {
     def http = new HTTPBuilder(url)
     def query = """
 {
-    "stored_fields": ["name"],
     "query": {
         "function_score": {
             "query" : {
@@ -68,7 +67,7 @@ def similar(def id) {
     http.shutdown()
     def rmap = [:]
     t.hits.hits.each { hit ->
-      def rid = hit._id.replaceAll("uniprot.","http://purl.uniprot.org/uniprot/")
+      def rid = hit._source.name
       rmap[rid] = hit._score
     }
     rmap
