@@ -1,7 +1,13 @@
 @Grab(group='com.github.albaker', module='GroovySparql', version='0.9.0')
 @Grab(group='com.jujutsu.tsne', module='tsne-demos', version='2.4.0')
+@Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7.1')
+
 
 import groovy.json.*
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.Method.POST
+import static groovyx.net.http.ContentType.*
 
 import groovy.sparql.*
 import com.jujutsu.tsne.barneshut.*
@@ -12,6 +18,26 @@ import org.math.plot.*
 import org.math.plot.plots.*
 
 def sparql = new Sparql(endpoint:"http://sparql.uniprot.org/")
+
+def search(def id) {
+  def url = 'http://127.0.0.1:9200/'
+  def http = new HTTPBuilder(url)
+  def fres = ""
+  def fres2 = null
+  http.request(GET, JSON) { req ->
+    uri.path = '/vector/_search' // overrides any path in the default URL
+    uri.query = [ size:'1', q: "name:\""+id+"\"" ]
+    response.success = { resp, json ->
+      //      fres = json.hits.hits[0]._source."@model_factor".split(" ").collect { new Double(it.split("\\|")[1]) }
+      if (json && json.hits && json.hits.hits && json.hits.hits[0]) {
+	fres2 = json.hits.hits[0]._source."@model_factor"
+      }
+    }
+  }
+  http.shutdown()
+  return fres2
+}
+
 
 def cosine = { x, y ->
   double dotProduct = 0.0
@@ -55,18 +81,25 @@ sparql.eachRow sparqlQuery, { row ->
     cm."$k" = [:]
     cm."$k"."value" = v
     cm."$k"."type" = (v instanceof String)?"uri":"literal"
-    if (vmap[v]) { // found a vector for that one
+    def vec = search(v)
+    if (vec) {
+      def vecvec = vec.split(" ").collect { new Double(it.split("\\|")[1]) }.toArray()
+      x << vecvec
+      dim = vecvec.size()
+      labels << v
+    }
+    /*    if (vmap[v]) { // found a vector for that one
       x << vmap[v].toArray()
       dim = vmap[v].size()
       labels << v
-    }
+      }*/
   }
   jMap.results.bindings << cm
   first = false
 }
 
 TSne tsne = new SimpleTSne()
-def conf = TSneUtils.buildConfig((double[][])x.toArray(), 2, dim, 20.0, 1000)
+def conf = TSneUtils.buildConfig((double[][])x.toArray(), 2, dim, 20.0, 750)
 def y = tsne.tsne(conf)
 
 def tMap = [:]
