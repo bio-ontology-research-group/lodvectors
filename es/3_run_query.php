@@ -27,7 +27,6 @@ $vector = "[".substr($b,0,-1)."]";
 
 $q = '
 {
-    "stored_fields": ["name"],
     "query": {
         "function_score": {
             "query" : {

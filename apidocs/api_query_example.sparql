@@ -1,0 +1,58 @@
+PREFIX up:<http://purl.uniprot.org/core/> 
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX owl:<http://www.w3.org/2002/07/owl#> 
+PREFIX taxon:<http://purl.uniprot.org/taxonomy/> 
+PREFIX go:<http://purl.obolibrary.org/obo/GO_>
+PREFIX eco:<http://purl.obolibrary.org/obo/ECO_0000> 
+SELECT 
+  DISTINCT ?protein ?golabel ?proteinlabel
+WHERE
+{
+  ?protein a up:Protein ;
+      up:organism taxon:9606 ;
+             rdfs:label ?proteinlabel .
+   
+  {
+    {
+      SELECT ?protein ?golabel 
+      WHERE {
+          ?protein a up:Protein ;
+      up:organism taxon:9606 .
+      VALUES ?go { go:0006915 go:0070085 go:0007600 go:0007610 go:0048511 }
+      {
+      ?protein up:classifiedWith ?go  .
+      ?attribution rdf:object ?go .
+      } UNION { 
+      ?protein up:classifiedWith ?term . ?term rdfs:subClassOf ?go .
+      ?attribution rdf:object ?term .
+      }
+      ?attribution rdf:subject ?protein ; 
+                     up:attribution/up:evidence ?evidence.
+FILTER(?evidence IN (eco:269, eco:314 ,eco:353, eco:315, eco:316, eco:270, eco:250))
+      ?go rdfs:label ?golabel .
+        } LIMIT 1000
+    }
+  } UNION {
+    {
+    SELECT ?protein ("UNKNOWN" AS ?golabel)
+    WHERE {
+      ?protein a up:Protein ;
+      up:organism taxon:9606 .
+      FILTER(NOT EXISTS {
+      {
+      ?protein up:classifiedWith ?go  .
+      ?attribution rdf:object ?go .
+      } UNION { 
+      ?protein up:classifiedWith ?term . ?term rdfs:subClassOf ?go .
+      ?attribution rdf:object ?term .
+      }
+      ?attribution rdf:subject ?protein ; 
+                     up:attribution/up:evidence ?evidence.
+FILTER(?evidence IN (eco:269, eco:314 ,eco:353, eco:315, eco:316, eco:270, eco:250))
+      })
+    } LIMIT 50
+    }
+  }
+}
+      
