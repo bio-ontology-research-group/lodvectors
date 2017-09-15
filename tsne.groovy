@@ -47,7 +47,7 @@ def cosine = { x, y ->
     dotProduct += x[i] * y[i]
     normA += Math.pow(x[i], 2)
     normB += Math.pow(y[i], 2)
-    }   
+  }   
   dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))
 }
 
@@ -60,101 +60,141 @@ if(!application) {
 
 //def vmap = context.getAttribute('vmap')
 
-def sparqlQuery = request.getParameter('query')
-if (sparqlQuery && sparqlQuery.size()>0) {
-def x = []
-def dim = 0
-def labels = []
-def jMap = [:]
-jMap.head = [:]
-jMap.head.vars = []
-jMap.results = [:]
-jMap.results.bindings = []
-def first = true
-sparql.eachRow sparqlQuery, { row ->
-  def cm = [:]
-  row.each {k, v ->
-    if (first) { // add headers
-      jMap.head.vars << k
+try {
+  def sparqlQuery = request.getParameter('query')
+  if (sparqlQuery && sparqlQuery.size()>0) {
+    def x = []
+    def dim = 0
+    def labels = []
+    def jMap = [:]
+    jMap.head = [:]
+    jMap.head.vars = []
+    jMap.results = [:]
+    jMap.results.bindings = []
+    def first = true
+    sparql.eachRow sparqlQuery, { row ->
+      def cm = [:]
+      row.each {k, v ->
+	if (first) { // add headers
+	  jMap.head.vars << k
+	}
+	// add content
+	cm."$k" = [:]
+	cm."$k"."value" = v
+	cm."$k"."type" = (v instanceof String)?"uri":"literal"
+	def vec = search(v)
+	if (vec) {
+	  def vecvec = vec.split(" ").collect { new Double(it.split("\\|")[1]) }.toArray()
+	  x << vecvec
+	  dim = vecvec.size()
+	  labels << v
+	}
+	/*    if (vmap[v]) { // found a vector for that one
+	      x << vmap[v].toArray()
+	      dim = vmap[v].size()
+	      labels << v
+	      }*/
+      }
+      jMap.results.bindings << cm
+      first = false
     }
-    // add content
-    cm."$k" = [:]
-    cm."$k"."value" = v
-    cm."$k"."type" = (v instanceof String)?"uri":"literal"
-    def vec = search(v)
-    if (vec) {
-      def vecvec = vec.split(" ").collect { new Double(it.split("\\|")[1]) }.toArray()
-      x << vecvec
-      dim = vecvec.size()
-      labels << v
+
+    TSne tsne = new SimpleTSne()
+    def conf = TSneUtils.buildConfig((double[][])x.toArray(), 2, dim, 20.0, 1000)
+    def y = tsne.tsne(conf)
+
+    def tMap = [:]
+    y.eachWithIndex { e, i ->
+      def label = labels[i]
+      tMap[label] = e
     }
-    /*    if (vmap[v]) { // found a vector for that one
-      x << vmap[v].toArray()
-      dim = vmap[v].size()
-      labels << v
-      }*/
+
+    jMap.results.bindings = jMap.results.bindings.collect { m ->
+      def m2 = [:]
+      m.each { k, v ->
+	if (v.value in labels) {
+	  def coord = tMap[v.value]
+	  def nkeyx = k+"_coord_x"
+	  def nkeyy = k+"_coord_y"
+	  m2[nkeyx] = [:]
+	  m2[nkeyx].type = "literal"
+	  m2[nkeyx].value = coord[0]
+	  m2[nkeyy] = [:]
+	  m2[nkeyy].type = "literal"
+	  m2[nkeyy].value = coord[1]
+	} 
+      }
+      m + m2
+    }
+    // Add the meta-data to turn this from a dumb API into a Smart API
+    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
+    jMap."meta" = [
+      "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/tsne.groovy",
+      "prov:generatedAt": new Date(),
+      "errors": [],
+      "warnings": [ "North Korean missile incoming." ],
+      "resultCount": jMap.results.bindings.size(),
+      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+    ]
+
+    Expando exp = new Expando()
+    exp.query = sparqlQuery
+    //exp.result = l
+
+    def builder = new JsonBuilder(jMap)
+    response.contentType = 'application/json'
+    println builder.toPrettyString()
+  } else {
+    def jMap = [:]
+    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
+    jMap."meta" = [
+      "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/tsne.groovy",
+      "prov:generatedAt": new Date(),
+      "errors": [],
+      "warnings": [ "No results found." ],
+      "resultCount": 0,
+      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+    ]
+    def builder = new JsonBuilder(jMap)
+    response.contentType = 'application/json'
+    println builder.toPrettyString()
   }
-  jMap.results.bindings << cm
-  first = false
-}
-
-TSne tsne = new SimpleTSne()
-def conf = TSneUtils.buildConfig((double[][])x.toArray(), 2, dim, 20.0, 750)
-def y = tsne.tsne(conf)
-
-def tMap = [:]
-y.eachWithIndex { e, i ->
-  def label = labels[i]
-  tMap[label] = e
-}
-
-jMap.results.bindings = jMap.results.bindings.collect { m ->
-  def m2 = [:]
-  m.each { k, v ->
-    if (v.value in labels) {
-      def coord = tMap[v.value]
-      def nkeyx = k+"_coord_x"
-      def nkeyy = k+"_coord_y"
-      m2[nkeyx] = [:]
-      m2[nkeyx].type = "literal"
-      m2[nkeyx].value = coord[0]
-      m2[nkeyy] = [:]
-      m2[nkeyy].type = "literal"
-      m2[nkeyy].value = coord[1]
-    } 
-  }
-  m + m2
-}
-
-Expando exp = new Expando()
-exp.query = sparqlQuery
-//exp.result = l
-
-def builder = new JsonBuilder(jMap)
-response.contentType = 'application/json'
-println builder.toPrettyString()
+} catch (Exception E) {
+  def jMap = [:]
+  jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
+  jMap."meta" = [
+    "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/tsne.groovy",
+    "prov:generatedAt": new Date(),
+    "errors": [E.getMessage()],
+    "warnings": [ ],
+    "resultCount": 0,
+    "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+  ]
+  def builder = new JsonBuilder(jMap)
+  response.contentType = 'application/json'
+  println builder.toPrettyString()
 }
 
 /*
-sparql.each sparqlQuery, {
+  sparql.each sparqlQuery, {
   v = vmap[protein]
   if (v != null) {
-    x << v.toArray()
-    dim = v.size()
-    labels << go
-    proteins << protein
+  x << v.toArray()
+  dim = v.size()
+  labels << go
+  proteins << protein
 
-     // similarity computation, put in separate servlet
-    def res = []
-    vmap.each { k, v2 ->
-      Expando exp = new Expando()
-      exp.k = k
-      exp.val = cosine(v, v2)
-      res << exp
-    }
-    res = res.sort { it.val }.reverse()
-    println "The 5 most similar proteins for $protein are " + res[0..5]
+  // similarity computation, put in separate servlet
+  def res = []
+  vmap.each { k, v2 ->
+  Expando exp = new Expando()
+  exp.k = k
+  exp.val = cosine(v, v2)
+  res << exp
+  }
+  res = res.sort { it.val }.reverse()
+  println "The 5 most similar proteins for $protein are " + res[0..5]
     
   }
-}
+  }
 */
