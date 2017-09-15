@@ -64,6 +64,19 @@ paths:
         Allows retrieval and similarity-based search of LODVectors.
       description: >-
         The API allows retrieval of vector representations of resources in JSON format, and also performs similarity-based retrieval (using cosine similarity) of related resources, given a resource.
+      responses:
+        '200':
+          description: Description
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response'
+              examples:
+                sparql:
+                  externalValue: >-
+                    https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/apidocs/api_query_response.json
+        '405':
+          description: Server error
       security: []
 externalDocs:
   description: ''
