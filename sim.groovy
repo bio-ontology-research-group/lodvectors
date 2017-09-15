@@ -80,22 +80,69 @@ if(!application) {
   application = request.getApplication(true)
 }
 
+response.contentType = 'application/json'
 def query = params.query
 def qtype = params.type
-if (qtype && qtype == "getvec") {
-  def result = search(query)
-  if (result) {
-    println result.split(" ").collect { it.split("\\|")[1] }
+def smart = params.smart
+def dumb = ((smart == null) || (smart?.toLowerCase() != "true"))
+
+if (dumb) {
+  if (qtype && qtype == "getvec") {
+    def result = search(query)
+    if (result) {    
+      println result.split(" ").collect { it.split("\\|")[1] }
+    } else {
+      println ""
+    }
   } else {
-    println ""
+    def result = similar(query)
+    if (result) {
+      def builder = new JsonBuilder(result)
+      println builder.toPrettyString()
+    } else {
+      println "{}"
+    }
   }
-} else {
-  def result = similar(query)
-  if (result) {
-    def builder = new JsonBuilder(result)
+} else { // smart
+  if (qtype && qtype == "getvec") {
+    def result = search(query)
+    
+    def jMap = [:]
+    if (result) {
+      jMap.results = result.split(" ").collect { it.split("\\|")[1] }
+    } else {
+      jMap.results = [:]
+    }
+    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
+    jMap."meta" = [
+      "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/sim.groovy",
+      "prov:generatedAt": new Date(),
+      "errors": [],
+      "warnings": [ "North Korean missile incoming." ],
+      "resultCount": result.size(),
+      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+    ]
+    def builder = new JsonBuilder(jMap)
     response.contentType = 'application/json'
     println builder.toPrettyString()
   } else {
-    println "{}"
+    def result = similar(query)
+    def jMap = [:]
+    if (result) {
+      jMap.results = result
+    } else {
+      jMap.results = [:]
+    }
+    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
+    jMap."meta" = [
+      "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/sim.groovy",
+      "prov:generatedAt": new Date(),
+      "errors": [],
+      "warnings": [ "North Korean missile incoming." ],
+      "resultCount": result.size(),
+      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+    ]
+    def builder = new JsonBuilder(jMap)
+    println builder.toPrettyString()
   }
 }
