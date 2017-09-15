@@ -58,6 +58,13 @@ paths:
         '405':
           description: Server error
       security: []
+  /sim.groovy:
+    get:
+      summary: >-
+        Allows retrieval and similarity-based search of LODVectors.
+      description: >-
+        The API allows retrieval of vector representations of resources in JSON format, and also performs similarity-based retrieval (using cosine similarity) of related resources, given a resource.
+      security: []
 externalDocs:
   description: ''
   url: 'http://jagannath.pdn.cam.ac.uk/lodvectors/ui'
