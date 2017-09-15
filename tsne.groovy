@@ -81,7 +81,7 @@ try {
 	// add content
 	cm."$k" = [:]
 	cm."$k"."value" = v
-	cm."$k"."type" = (v instanceof String)?"uri":"literal"
+	cm."$k"."type" = (v instanceof String && v.indexOf(" ")==-1)?"uri":"string"
 	def vec = search(v)
 	if (vec) {
 	  def vecvec = vec.split(" ").collect { new Double(it.split("\\|")[1]) }.toArray()
@@ -117,24 +117,24 @@ try {
 	  def nkeyx = k+"_coord_x"
 	  def nkeyy = k+"_coord_y"
 	  m2[nkeyx] = [:]
-	  m2[nkeyx].type = "literal"
+	  m2[nkeyx].type = "double"
 	  m2[nkeyx].value = coord[0]
 	  m2[nkeyy] = [:]
-	  m2[nkeyy].type = "literal"
+	  m2[nkeyy].type = "double"
 	  m2[nkeyy].value = coord[1]
 	} 
       }
       m + m2
     }
     // Add the meta-data to turn this from a dumb API into a Smart API
-    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
-    jMap."meta" = [
+    jMap."@context" = "//purl.org/smartapi/smartapi.jsonld"
+    jMap."smartapi:meta" = [
       "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/tsne.groovy",
       "prov:generatedAt": new Date(),
-      "errors": [],
-      "warnings": [ "North Korean missile incoming." ],
-      "resultCount": jMap.results.bindings.size(),
-      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+      "smartapi:errors": [],
+      "smartapi:warnings": [ "North Korean missile incoming." ],
+      "smartapi:resultCount": jMap.results.bindings.size(),
+      "smartapi:URLcalled": request.getRequestURL()+"?"+request.getQueryString()
     ]
 
     Expando exp = new Expando()
@@ -145,30 +145,30 @@ try {
     response.contentType = 'application/json'
     println builder.toPrettyString()
   } else {
-    def jMap = [:]
-    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
-    jMap."meta" = [
+    jMap = [:]
+    jMap."@context" = "//purl.org/smartapi/smartapi.jsonld"
+    jMap."smartapi:meta" = [
       "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/tsne.groovy",
       "prov:generatedAt": new Date(),
-      "errors": [],
-      "warnings": [ "No results found." ],
-      "resultCount": 0,
-      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+      "smartapi:errors": [],
+      "smartapi:warnings": [ "No results found." ],
+      "smartapi:resultCount": 0,
+      "smartapi:URLcalled": request.getRequestURL()+"?"+request.getQueryString()
     ]
     def builder = new JsonBuilder(jMap)
     response.contentType = 'application/json'
     println builder.toPrettyString()
   }
 } catch (Exception E) {
-  def jMap = [:]
-  jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
-  jMap."meta" = [
+  jMap = [:]
+  jMap."@context" = "//purl.org/smartapi/smartapi.jsonld"
+  jMap."smartapi:meta" = [
     "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/tsne.groovy",
     "prov:generatedAt": new Date(),
-    "errors": [E.getMessage()],
-    "warnings": [ ],
-    "resultCount": 0,
-    "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+    "smartapi:errors": [E.getMessage()],
+    "smartapi:warnings": [ ],
+    "smartapi:resultCount": 0,
+    "smartapi:URLcalled": request.getRequestURL()+"?"+request.getQueryString()
   ]
   def builder = new JsonBuilder(jMap)
   response.contentType = 'application/json'

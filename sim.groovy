@@ -113,14 +113,14 @@ if (dumb) {
     } else {
       jMap.results = [:]
     }
-    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
-    jMap."meta" = [
+    jMap."@context" = "//purl.org/smartapi/smartapi.jsonld"
+    jMap."smartapi:meta" = [
       "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/sim.groovy",
       "prov:generatedAt": new Date(),
-      "errors": [],
-      "warnings": [ "North Korean missile incoming." ],
-      "resultCount": result.size(),
-      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+      "smartapi:errors": [],
+      "smartapi:warnings": [ "North Korean missile incoming." ],
+      "smartapi:resultCount": result.size(),
+      "smartapi:URLcalled": request.getRequestURL()+"?"+request.getQueryString()
     ]
     def builder = new JsonBuilder(jMap)
     response.contentType = 'application/json'
@@ -133,14 +133,14 @@ if (dumb) {
     } else {
       jMap.results = [:]
     }
-    jMap."@context" = "https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/lodvector.jsonld"
-    jMap."meta" = [
+    jMap."@context" = "//purl.org/smartapi/smartapi.jsonld"
+    jMap."smartapi:meta" = [
       "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/sim.groovy",
       "prov:generatedAt": new Date(),
-      "errors": [],
-      "warnings": [ "North Korean missile incoming." ],
-      "resultCount": result.size(),
-      "URLcalled": request.getRequestURL()+"?"+request.getQueryString()
+      "smartapi:errors": [],
+      "smartapi:warnings": [ "North Korean missile incoming." ],
+      "smartapi:resultCount": result.size(),
+      "smartapi:URLcalled": request.getRequestURL()+"?"+request.getQueryString()
     ]
     def builder = new JsonBuilder(jMap)
     println builder.toPrettyString()
