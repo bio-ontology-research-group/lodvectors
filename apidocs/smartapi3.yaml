@@ -39,6 +39,7 @@ paths:
           schema:
             type: string
           description: A valid SPARQL query
+          allowEmptyValue: true
           examples:
             sparql:
               $ref: >-
@@ -68,6 +69,9 @@ components:
         meta:
           type: object
           properties:
+            '@context':
+              type: string
+              format: url
             urlCalled:
               type: string
               format: url
