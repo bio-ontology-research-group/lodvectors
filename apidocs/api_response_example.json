@@ -20,117 +20,117 @@
       {
         "proteinlabel": {
           "value": "Histone acetyltransferase p300",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "apoptotic process",
-          "type": "uri"
+          "type": "string"
         },
         "protein": {
           "value": "http://purl.uniprot.org/uniprot/Q09472",
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": 6779.038337980783
+          "type": "double",
+          "value": 2483.642275947248
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": -9044.844561303047
+          "type": "double",
+          "value": 10537.125986762852
         }
       },
       {
         "proteinlabel": {
           "value": "CASP8 and FADD-like apoptosis regulator",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "apoptotic process",
-          "type": "uri"
+          "type": "string"
         },
         "protein": {
           "value": "http://purl.uniprot.org/uniprot/O15519",
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": -9404.41645454145
+          "type": "double",
+          "value": -1665.3152251198717
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": -4580.739035497802
+          "type": "double",
+          "value": -4548.584650265842
         }
       },
       {
         "proteinlabel": {
           "value": "BRCA1-associated ATM activator 1",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "apoptotic process",
-          "type": "uri"
+          "type": "string"
         },
         "protein": {
           "value": "http://purl.uniprot.org/uniprot/Q6PJG6",
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": -3346.966653006599
+          "type": "double",
+          "value": 10537.957219538115
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": 11102.099401141768
+          "type": "double",
+          "value": 5722.399845152921
         }
       },
       {
         "proteinlabel": {
           "value": "Rho GTPase-activating protein 7",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "apoptotic process",
-          "type": "uri"
+          "type": "string"
         },
         "protein": {
           "value": "http://purl.uniprot.org/uniprot/Q96QB1",
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": 6066.961280484716
+          "type": "double",
+          "value": -8288.180773770335
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": 10031.197541150494
+          "type": "double",
+          "value": -8795.097597735497
         }
       },
       {
         "proteinlabel": {
           "value": "Huntingtin-interacting protein 1",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "apoptotic process",
-          "type": "uri"
+          "type": "string"
         },
         "protein": {
           "value": "http://purl.uniprot.org/uniprot/O00291",
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": 5093.297303628112
+          "type": "double",
+          "value": 10352.59549247381
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": 2176.9641652824525
+          "type": "double",
+          "value": -5382.135202881198
         }
       },
       {
         "proteinlabel": {
           "value": "Tyrosine-protein kinase",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "UNKNOWN",
@@ -141,18 +141,18 @@
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": 14.42270976848521
+          "type": "double",
+          "value": -2640.607342309319
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": -4256.316810782494
+          "type": "double",
+          "value": 3377.437237173389
         }
       },
       {
         "proteinlabel": {
           "value": "Protein kinase C substrate 80K-H, isoform CRA_a",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "UNKNOWN",
@@ -163,18 +163,18 @@
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": -3289.4440901035523
+          "type": "double",
+          "value": 4694.934758333074
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": -11587.260435581644
+          "type": "double",
+          "value": 353.5259163582548
         }
       },
       {
         "proteinlabel": {
           "value": "Peroxiredoxin 2, isoform CRA_d",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "UNKNOWN",
@@ -185,18 +185,18 @@
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": -2987.9839396215934
+          "type": "double",
+          "value": -7425.584288658408
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": 2936.675148933944
+          "type": "double",
+          "value": 9689.18346721353
         }
       },
       {
         "proteinlabel": {
           "value": "Abhydrolase domain containing 9, isoform CRA_a",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "UNKNOWN",
@@ -207,18 +207,18 @@
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": -11028.534857488447
+          "type": "double",
+          "value": 2815.2930386206344
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": 4320.028759939756
+          "type": "double",
+          "value": -11263.378703641725
         }
       },
       {
         "proteinlabel": {
           "value": "Deoxyribonuclease II, lysosomal, isoform CRA_a",
-          "type": "uri"
+          "type": "string"
         },
         "golabel": {
           "value": "UNKNOWN",
@@ -229,12 +229,12 @@
           "type": "uri"
         },
         "protein_coord_x": {
-          "type": "literal",
-          "value": 12103.626362899542
+          "type": "double",
+          "value": -10864.73515505495
         },
         "protein_coord_y": {
-          "type": "literal",
-          "value": -1097.8041732834286
+          "type": "double",
+          "value": 309.5237018633156
         }
       }
     ]
