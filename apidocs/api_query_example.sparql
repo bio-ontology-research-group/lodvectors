@@ -31,7 +31,7 @@ WHERE
                      up:attribution/up:evidence ?evidence.
 FILTER(?evidence IN (eco:269, eco:314 ,eco:353, eco:315, eco:316, eco:270, eco:250))
       ?go rdfs:label ?golabel .
-        } LIMIT 1000
+        } LIMIT 5
     }
   } UNION {
     {
@@ -51,7 +51,7 @@ FILTER(?evidence IN (eco:269, eco:314 ,eco:353, eco:315, eco:316, eco:270, eco:2
                      up:attribution/up:evidence ?evidence.
 FILTER(?evidence IN (eco:269, eco:314 ,eco:353, eco:315, eco:316, eco:270, eco:250))
       })
-    } LIMIT 50
+    } LIMIT 5
     }
   }
 }
