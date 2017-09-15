@@ -1,0 +1,27 @@
+{
+    "results": {
+        "http://purl.uniprot.org/uniprot/Q8IUI3": 1.0000001,
+        "http://purl.uniprot.org/uniprot/Q2M1K1": 0.9059883,
+        "http://purl.uniprot.org/uniprot/Q9H9J3": 0.79818463,
+        "http://purl.uniprot.org/uniprot/Q5SZV1": 0.77470547,
+        "http://purl.uniprot.org/uniprot/D6W630": 0.7461347,
+        "http://purl.uniprot.org/uniprot/C9JBJ8": 0.74490845,
+        "http://purl.uniprot.org/uniprot/Q5SZV0": 0.7397147,
+        "http://purl.uniprot.org/uniprot/E7ENU3": 0.7383054,
+        "http://purl.uniprot.org/uniprot/Q17RJ9": 0.7380528,
+        "http://purl.uniprot.org/uniprot/Q6UVX7": 0.73745275
+    },
+    "@context": "//purl.org/smartapi/smartapi.jsonld",
+    "smartapi:meta": {
+        "prov:wasGeneratedBy": "https://github.com/bio-ontology-research-group/lodvectors/blob/master/sim.groovy",
+        "prov:generatedAt": "2017-09-15T04:43:50+0000",
+        "smartapi:errors": [
+            
+        ],
+        "smartapi:warnings": [
+            "North Korean missile incoming."
+        ],
+        "smartapi:resultCount": 10,
+        "smartapi:URLcalled": "http://jagannath.pdn.cam.ac.uk:31337/sim.groovy?query=http://purl.uniprot.org/uniprot/Q8IUI3&type=sim&smart=true"
+    }
+}
