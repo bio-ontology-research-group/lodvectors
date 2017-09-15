@@ -8,7 +8,8 @@ info:
     The LODVectors API focuses on computation involving knowledge graph
     embeddings.
   version: 0.1.0
-  termsOfService: 'https://github.com/bio-ontology-research-group/lodvectors/blob/master/apidocs/termsofservice.md'
+  termsOfService: >-
+    https://github.com/bio-ontology-research-group/lodvectors/blob/master/apidocs/termsofservice.md
   contact:
     email: robert.hoehndorf@kaust.edu.sa
     name: Robert Hoehndorf
@@ -60,13 +61,49 @@ paths:
       security: []
   /sim.groovy:
     get:
-      summary: >-
-        Allows retrieval and similarity-based search of LODVectors.
+      summary: Allows retrieval and similarity-based search of LODVectors.
       description: >-
-        The API allows retrieval of vector representations of resources in JSON format, and also performs similarity-based retrieval (using cosine similarity) of related resources, given a resource.
+        The API allows retrieval of vector representations of resources in JSON
+        format, and also performs similarity-based retrieval (using cosine
+        similarity) of related resources, given a resource.
+      operationId: type
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - getvec
+              - sim
+          description: >-
+            One of two keywords determining which operation to perform. "getvec"
+            will retrieve vectors, while "sim" will find the ten most similar
+            vectors.
+          allowEmptyValue: false
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: >-
+            The URL of the resource which should be queried. Depending on the
+            type of the query, will either return the vector representation of
+            the resource or the 10 most similar resources together with their
+            cosine similarity values.
+          allowEmptyValue: false
+        - name: smart
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Whether to return SmartAPI metadata in the query. Defaults to false.
+          allowEmptyValue: false
       responses:
         '200':
-          description: Description
+          description: >-
+            Will either return the vector representation of the resource or the
+            ten most similar vectors.
           content:
             application/json:
               schema:
@@ -74,13 +111,13 @@ paths:
               examples:
                 sparql:
                   externalValue: >-
-                    https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/apidocs/api_query_response.json
+                    https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/apidocs/api_sim_response_example.json
         '405':
           description: Server error
       security: []
 externalDocs:
   description: ''
-  url: 'http://jagannath.pdn.cam.ac.uk/lodvectors/ui'
+  url: 'https://github.com/dbcls/bh17/wiki/LODVectors'
 components:
   schemas:
     response:
@@ -92,7 +129,7 @@ components:
             '@context':
               type: string
               format: url
-            urlCalled:
+            'smartapi:urlCalled':
               type: string
               format: url
             'prov:generatedAt':
@@ -101,18 +138,20 @@ components:
             'prov:wasGeneratedBy':
               type: string
               format: url
-            errors:
+            'smartapi:errors':
               type: array
               items:
                 type: string
-            warnings:
+            'smartapi:warnings':
               type: array
               items:
                 type: string
-            resultCount:
+            'smartapi:resultCount':
               type: integer
         results:
           type: array
+          items:
+            type: object
   responses: {}
   parameters: {}
   examples: {}
