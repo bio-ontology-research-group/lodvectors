@@ -1,0 +1,99 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://jagannath.pdn.cam.ac.uk'
+    variables: {}
+info:
+  title: LODVectors API
+  description: >-
+    The LODVectors API focuses on computation involving knowledge graph
+    embeddings.
+  version: 0.1.0
+  termsOfService: 'https://github.com/bio-ontology-research-group/lodvectors/termsofservice.md'
+  contact:
+    email: robert.hoehndorf@kaust.edu.sa
+    name: Robert Hoehndorf
+    x-role: responsible developer
+    url: 'https://www.kaust.edu.sa/en/study/faculty/robert-hoehndorf'
+  x-contacts:
+    name: Michel Dumontier
+    x-role: documentation editor
+    url: 'http://dumontierlab.com'
+    email: michel.dumontier@maastrichtuniversity.nl
+tags: []
+paths:
+  /tsne.groovy:
+    get:
+      summary: >-
+        Perform a SPARQL query on the server enhanced with vector
+        representations.
+      description: >-
+        Queries the UniProt SPARQL endpoint and for each URI it can matches, it
+        injects x and y coordinates of a vector representation using an t-SNE
+        transformation. New fields are added with the suffix "_coord_x" and
+        "_coord_y". 
+      operationId: query
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: A valid SPARQL query
+          examples:
+            sparql:
+              $ref: >-
+                https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/apidocs/api_query_example.sparql
+      responses:
+        '200':
+          description: Description
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response'
+              examples:
+                sparql:
+                  externalValue: >-
+                    https://raw.githubusercontent.com/bio-ontology-research-group/lodvectors/master/apidocs/api_query_response.json
+        '405':
+          description: Server error
+      security: []
+externalDocs:
+  description: ''
+  url: 'http://jagannath.pdn.cam.ac.uk/lodvectors/ui'
+components:
+  schemas:
+    response:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            urlCalled:
+              type: string
+              format: url
+            'prov:generatedAt':
+              type: string
+              format: dateTime
+            'prov:wasGeneratedBy':
+              type: string
+              format: url
+            errors:
+              type: array
+              items:
+                type: string
+            warnings:
+              type: array
+              items:
+                type: string
+            resultCount:
+              type: integer
+        results:
+          type: array
+  responses: {}
+  parameters: {}
+  examples: {}
+  securitySchemes: {}
+  headers: {}
+  links: {}
+  callbacks: {}
+security: []
