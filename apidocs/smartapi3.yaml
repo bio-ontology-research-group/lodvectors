@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: 'http://jagannath.pdn.cam.ac.uk'
+  - url: 'http://jagannath.pdn.cam.ac.uk:31337'
     variables: {}
 info:
   title: LODVectors API
