@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="img/favicon.ico">
+
+    <title>Bio2Vec</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/bio2vec.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="css/datatables.min.css"/>
+ 
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#"><img style="max-width:100px;
+      margin-top: -7px;" src="mg/bio2vec-black.png" alt="Bio2Vec" /></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse"
+	   id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link"
+            href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Partners</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Publications</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+            id="dropdown01"
+            data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">Resources</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="http://deepgo.bio2vec.net/">DeepGO</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else
+              here</a>
+            </div>
+          </li>
+          <li class=".pull-right">
+            <a class="nav-link" href="#">About</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+    <div class="container">
+      <div class="ui-widget">
+	<label for="query">Query: </label>
+	<input id="query">
+	<input id="query-id" type="hidden">
+	<input id="vec-hidden" type="hidden">
+      </div>
+      <div class="container">
+	<h3 id="c-label"></h3>
+	<p>
+	<label id="c-id"></label>
+	</p>
+	<p>
+	<label id="c-names"></label>
+	</p>
+	<p>
+	<label id="c-dataset"></label>
+	</p>
+	<p>
+	<label id="c-source"></label>
+	</p>
+	<p>
+	  <div class="tableembed">
+	    <table id="tab-vector" class="bordertable" style="width: 100%;">
+	      <tr>
+		<label id="c-vector"></label>
+	      </tr>
+	    </table>
+	  </div>
+	</p>
+
+	<table id="sim" class="display" width="100%" cellspacing="0" style="display:none">
+        <thead>
+            <tr>
+                <th>Label</th>
+                <th>ID</th>
+                <th>DataSet</th>
+                <th>Similarity</th>
+            </tr>
+        </thead>
+	</table>
+	
+      </div>
+    </div><!-- /container -->
+
+    </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+    crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/elasticsearch.min.js"></script>
+    <script src="js/elasticsearch.jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+    <script src="js/jquery.elastic-datatables.js"></script>
+
+
+  <script>
+    var dataSet = [] ;
+    function update(vec, dataset) {
+
+    $('#sim').DataTable().destroy();
+    $('#sim').DataTable({
+            "order": [[ 3, "desc" ]],
+            "bFilter": false,
+            "paging": false,
+            "ajax": {
+              "url": "elastic/sim.groovy",
+              "type": "POST",
+              "data" : {
+                vector : vec.toString(),
+                dataset : dataset
+              }
+            },
+    }
+    );
+    $('#sim').show();
+    }
+  </script>
+
+  <script>
+  $( function() {
+    function log( message ) {
+      $( "<div>" ).text( message ).prependTo( "#log" );
+      $( "#log" ).scrollTop( 0 );
+    }
+ 
+    $( "#query" ).autocomplete({
+      source: "elastic/search.groovy",
+      
+      focus: function( event, ui ) {
+//      console.log(ui.item._source.names[0]);
+//      $( "#query" ).val( ui.item._source.names[0] );
+      return false;
+      },
+      select: function( event, ui ) {
+//      console.log(ui.item);
+      $( "#c-label" ).text( ui.item._source.names[0] );
+      $( "#c-names" ).html( "<ul><li>"+ui.item._source.names.join("</li><li>") +"</li></ul>" );
+      $( "#query-id" ).val( ui.item._source.id );
+      $( "#c-id" ).html( "IRI: <tt>"+ui.item._source.id+"</tt>" );
+      $( "#c-dataset" ).html( "Dataset: <tt>"+ui.item._source.dataset_name+"</tt>" );
+      $( "#c-source" ).html( "Source DB: <tt>"+ui.item._source.source+"</tt>" );
+
+      var vec = ui.item._source["@model_factor"].split(" ").map(function(str) {
+      var el = str.split("\|");
+      var res = parseFloat(el[1]);
+      //return el[1];
+      return res;
+      });
+      $("#vec-hidden").val(vec);
+      var vecString = "";
+      vec.forEach(function(el) {
+      vecString += "<td class=\"bordertable\">"+el+"</td>";
+      });
+      $( "#c-vector" ).html( vecString );
+      update(vec, ui.item._source.dataset_name);
+      return false;
+      }
+      })
+      .autocomplete( "instance" )._renderItem = function( ul, item
+      ) {
+      return $( "<li>" )
+        .append( "<div>" + item._source.names[0] + "<br><tt>" + item._source.id + "</tt></div>"
+      )
+        .appendTo( ul );
+    };
+      ;
+      });
+  </script>
+
+  </body>
+</html>
